@@ -10,22 +10,22 @@ import java.util.List;
 
 public class InputManager {
 
-    private static final int SMELLSINPUTSIZE = 6;
+    private static final int CODESMELLSINPUTSIZE = 6;
 
     private File project;
     private List<File> projectFiles;
     private String[] pathEntries;
     private ArrayList<ClassSmellAnalyzer> classSmellAnalyzers;
     private String selectedPackage;
-    private String outputPath;
+    private File outputLogFile;
 
     public InputManager(String directoryPath, String outputPath, String selectedSmells){
         this.project = new File(directoryPath);
         this.pathEntries = new String[1];
         this.pathEntries[0]=directoryPath;
-        this.outputPath=outputPath;
+        this.outputLogFile = new File(outputPath);
         this.projectFiles = listJavaFiles(this.project);
-        this.classSmellAnalyzers = getClassSmellAnalyzers(selectedSmells);
+        this.classSmellAnalyzers = setClassSmellAnalyzers(selectedSmells);
         this.selectedPackage="";
     }
 
@@ -50,8 +50,21 @@ public class InputManager {
         return selectedPackage;
     }
 
-    public String getOutputPath() {
-        return outputPath;
+    public File getOutputLogFile() {
+        return outputLogFile;
+    }
+
+    public static boolean isAValidInput(String directoryPath, String outputLogFile, String selectedSmells){
+        File project = new File(directoryPath);
+        File output = new File(outputLogFile);
+
+        if(project.isDirectory() && output.getParentFile().isDirectory() && selectedSmells.length()==CODESMELLSINPUTSIZE){
+            return true;
+        }
+        else{
+            return false;
+        }
+
     }
 
     private ArrayList<File> listJavaFiles(File pDirectory) {
@@ -74,7 +87,7 @@ public class InputManager {
     }
 
 
-    private  ArrayList<ClassSmellAnalyzer> getClassSmellAnalyzers (String selectedSmells){
+    private  ArrayList<ClassSmellAnalyzer> setClassSmellAnalyzers (String selectedSmells){
         ArrayList<ClassSmellAnalyzer> classSmellAnalyzers = new ArrayList<>();
         if (selectedSmells.charAt(0)=='1') {
             classSmellAnalyzers.add(new DWAnalyzer());
@@ -96,18 +109,5 @@ public class InputManager {
         }
 
         return classSmellAnalyzers;
-    }
-
-    public static boolean isAValidInput(String directoryPath, String outputPath, String selectedSmells){
-        File project = new File(directoryPath);
-        File output = new File(outputPath);
-
-        if(project.isDirectory() && output.isDirectory() && selectedSmells.length()==SMELLSINPUTSIZE){
-            return true;
-        }
-        else{
-            return false;
-        }
-
     }
 }
