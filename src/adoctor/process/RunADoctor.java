@@ -41,12 +41,12 @@ public class RunADoctor {
 
     public static void main (String[] args){
 
-/*
+
         args=new String[3];
         args[0] = "C:\\Users\\Francesco\\Desktop\\qui\\testclasses"; //project path
         args[1] = "C:\\Users\\Francesco\\Desktop\\qui\\log.json"; //output path
         args[2] = "111111"; //selected code smells
-*/
+
 
         //validating the input
         if( args.length!=3 || (!InputManager.isAValidInput(args[0], args[1], args[2])) ){
@@ -71,7 +71,7 @@ public class RunADoctor {
                 System.out.println("NO CODE SMELL FOUND");
                 return;
             }
-
+/*
             //refactoring
             ArrayList<ClassSmellProposer> classSmellProposers = new ArrayList<>();
             if (args[2].charAt(0)=='1') {
@@ -103,7 +103,7 @@ public class RunADoctor {
                 refactoringDriver.startRefactoring();
             }
             //refactoring finished
-
+*/
 
 
 
@@ -136,9 +136,8 @@ public class RunADoctor {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (BadLocationException e) {
-            e.printStackTrace();
         }
+        /* catch (BadLocationException e) {e.printStackTrace();}*/
 
 
     }
