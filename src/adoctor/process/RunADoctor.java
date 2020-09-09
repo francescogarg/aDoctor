@@ -42,11 +42,11 @@ public class RunADoctor {
     public static void main (String[] args){
 
 
-        args=new String[3];
+        /*args=new String[3];
         args[0] = "C:\\Users\\Francesco\\Desktop\\qui\\testclasses"; //project path
         args[1] = "C:\\Users\\Francesco\\Desktop\\qui\\log.json"; //output path
         args[2] = "111111"; //selected code smells
-
+*/
 
         //validating the input
         if( args.length!=3 || (!InputManager.isAValidInput(args[0], args[1], args[2])) ){
@@ -109,6 +109,7 @@ public class RunADoctor {
 
             JSONArray smellsJSONArray = new JSONArray();
             JSONObject smellJSON;
+            String tempAbsPath;
 
             //creating the JSON array of code smells
             for (ClassSmell cs: classSmells) {
@@ -116,7 +117,11 @@ public class RunADoctor {
                 smellJSON.put("Class Name", cs.getClassBean().getSourceFile().getName());
                 smellJSON.put("Smell Name", cs.getName());
                 smellJSON.put("Smell Description", cs.getDescription());
-                smellJSON.put("Location", cs.getClassBean().getSourceFile().getAbsolutePath());
+
+                //removing the Travis path from the absolute path
+                tempAbsPath= cs.getClassBean().getSourceFile().getAbsolutePath();
+                tempAbsPath=tempAbsPath.replaceFirst(inputCL.getProject().getAbsolutePath(), "");
+                smellJSON.put("Location",tempAbsPath);
 
                 smellsJSONArray.put(smellJSON);
             }

@@ -46,6 +46,8 @@ public class CoreDriver implements StartDialog.StartCallback,
 
     private List<ClassSmell> smellInstances;
 
+    private File jsonFile;
+
     public CoreDriver(Project project, String pluginId) {
         this.project = project;
         this.measurementManager = new MeasurementManager(UUID.nameUUIDFromBytes(project.getName().getBytes()).toString());
@@ -64,6 +66,8 @@ public class CoreDriver implements StartDialog.StartCallback,
     }
 
     ////////////////StartDialog///////////////
+
+
     @Override
     public void runAnalysis(StartDialog startDialog, List<Boolean> selectedSmells, String targetPackage) {
         startDialog.dispose();
@@ -71,6 +75,13 @@ public class CoreDriver implements StartDialog.StartCallback,
         this.targetPackage = targetPackage;
         preferenceManager.setSavedSelectedSmells(selectedSmells);
         runAnalysis();
+    }
+
+    @Override
+    public void runAnalysisJSON(StartDialog startDialog, File selectedFile){
+        startDialog.dispose();
+        this.jsonFile=selectedFile;
+        runAnalysisJSON();
     }
 
     @Override
@@ -287,5 +298,12 @@ public class CoreDriver implements StartDialog.StartCallback,
             System.out.println("Cannot send any data");
         }
         AnalysisDialog.show(this, projectFiles, pathEntries, selectedSmells, targetPackage);
+    }
+
+
+    private void runAnalysisJSON(){
+        System.out.println("CI SIAMO: "+this.jsonFile.getAbsolutePath());
+
+        
     }
 }

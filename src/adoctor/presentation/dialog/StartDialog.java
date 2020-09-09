@@ -1,13 +1,18 @@
 package adoctor.presentation.dialog;
 
 import com.intellij.ide.util.PackageChooserDialog;
+
 import com.intellij.openapi.project.Project;
 
+
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -31,6 +36,8 @@ public class StartDialog extends AbstractDialog {
     private JButton buttonRun;
     private JButton buttonAbout;
     private JTextField fieldPackage;
+    private JButton buttonRunJSON;
+    private JTextField fieldJSONFile;
 
     private List<JCheckBox> checkBoxes;
 
@@ -61,6 +68,8 @@ public class StartDialog extends AbstractDialog {
             checkAll.setSelected(false);
             checkAll.doClick();
         }
+
+
     }
 
     public static void show(StartCallback startCallback, Project project, List<Boolean> selectedSmells) {
@@ -84,6 +93,20 @@ public class StartDialog extends AbstractDialog {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
                 onSelectModule();
+            }
+        });
+
+        fieldJSONFile.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                onSelectJSONField();
+            }
+        });
+
+        buttonRunJSON.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                runAdoctorJSON();
             }
         });
 
@@ -129,6 +152,29 @@ public class StartDialog extends AbstractDialog {
         }
     }
 
+    private void onSelectJSONField(){
+        JFileChooser fileChooser = new JFileChooser();
+        FileFilter filter = new FileNameExtensionFilter("JSON File","json");
+        fileChooser.setFileFilter(filter);
+
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            fieldJSONFile.setText(selectedFile.getAbsolutePath());
+        }
+    }
+
+    private void runAdoctorJSON(){
+        File selectedJSON = new File(fieldJSONFile.getText());
+        if (!selectedJSON.exists()){
+            System.out.println("ERROR: select a valid JSON file");
+            return;
+        }
+
+        startCallback.runAnalysisJSON(this, selectedJSON);
+    }
+
     private void onRun() {
         // Nothing is selected: "select at least one" pop-up
         List<Boolean> selections = checkBoxes.stream().map(AbstractButton::isSelected).collect(Collectors.toList());
@@ -150,6 +196,8 @@ public class StartDialog extends AbstractDialog {
 
     public interface StartCallback {
         void runAnalysis(StartDialog startDialog, List<Boolean> selectedSmells, String targetPackage);
+
+        void runAnalysisJSON(StartDialog startDialog, File selectedJSON);
 
         void startSettings(StartDialog startDialog);
 
