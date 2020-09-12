@@ -1,8 +1,9 @@
 package adoctor.application.analysis;
 
-import adoctor.application.analysis.analyzers.ClassSmellAnalyzer;
+import adoctor.application.analysis.analyzers.*;
 import adoctor.application.ast.ASTUtilities;
 import adoctor.application.bean.ClassBean;
+import adoctor.application.resultsFromFile.SmellResult;
 import adoctor.application.smell.ClassSmell;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
@@ -130,4 +131,5 @@ public class AnalysisDriver {
             }
         }
     }
+
 }

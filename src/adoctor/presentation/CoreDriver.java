@@ -2,9 +2,12 @@ package adoctor.presentation;
 
 import adoctor.application.analytics.MeasurementManager;
 import adoctor.application.proposal.undo.Undo;
+import adoctor.application.resultsFromFile.SmellResult;
+import adoctor.application.resultsFromFile.SmellResultList;
 import adoctor.application.smell.ClassSmell;
 import adoctor.presentation.dialog.*;
 import adoctor.presentation.pref.PreferenceManager;
+
 import com.intellij.ide.SaveAndSyncHandler;
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.application.ApplicationManager;
@@ -17,12 +20,18 @@ import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.eclipse.jface.text.Document;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Stack;
-import java.util.UUID;
+import java.nio.file.Files;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CoreDriver implements StartDialog.StartCallback,
@@ -31,6 +40,7 @@ public class CoreDriver implements StartDialog.StartCallback,
         AbortedDialog.AbortedCallback,
         NoSmellDialog.NoSmellCallback,
         SmellDialog.SmellCallback,
+        ResultsFromFileDialog.ResultsFromFileCallback,
         RefactoringDialog.RefactoringCallback,
         SuccessDialog.SuccessCallback,
         FailureDialog.FailureCallback {
@@ -264,6 +274,23 @@ public class CoreDriver implements StartDialog.StartCallback,
         SmellDialog.show(this, project, smellInstances, selectedSmells, !undoStack.isEmpty());
     }
 
+    ///////////////////////ResultsFromFileDialog///////////////////////
+    @Override
+    public void resultsBack(ResultsFromFileDialog resultsFromFileDialog) {
+        resultsFromFileDialog.dispose();
+        start();
+    }
+
+    @Override
+    public void resultsRefactor(ResultsFromFileDialog resultsFromFileDialog, SmellResultList smellResultList) {
+        System.out.println("starting refactor");
+        resultsFromFileDialog.dispose();
+
+
+
+        //AnalysisDialog.show(this,);
+    }
+
     ///////////////////////Helper methods///////////////////////
     public void start() {
         StartDialog.show(this, project, selectedSmells);
@@ -302,8 +329,38 @@ public class CoreDriver implements StartDialog.StartCallback,
 
 
     private void runAnalysisJSON(){
-        System.out.println("CI SIAMO: "+this.jsonFile.getAbsolutePath());
 
-        
+        JSONParser jsonParser = new JSONParser();
+
+        try {
+
+            JSONArray a = (JSONArray) jsonParser.parse(new FileReader(jsonFile));
+
+            SmellResultList smellList=new SmellResultList();
+            SmellResult smellResult;
+
+            for (Object o : a) {
+
+                String location =  ((JSONObject) o).get("Location" ).toString();
+                String smellName = ((JSONObject) o).get("Smell Name" ).toString();
+                File smellLocation = new File (location);
+
+                smellResult=new SmellResult(smellLocation, smellName, true);
+                smellList.addSmell(smellResult);
+            }
+
+            ResultsFromFileDialog.show(this, smellList);
+
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
+
+
 }

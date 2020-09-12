@@ -17,6 +17,6 @@
     <orderEntry type="library" scope="TEST" name="Mockito" level="project" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="library" name="HttpClient 4.5.11" level="project" />
-    <orderEntry type="library" name="org.json:json:20200518" level="project" />
+    <orderEntry type="library" name="com.googlecode.json-simple:json-simple:1.1.1" level="project" />
   </component>
 </module>

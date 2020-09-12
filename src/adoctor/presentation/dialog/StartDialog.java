@@ -42,6 +42,7 @@ public class StartDialog extends AbstractDialog {
     private List<JCheckBox> checkBoxes;
 
     private StartDialog(StartCallback startCallback, Project project, List<Boolean> selectedSmells) {
+
         this.startCallback = startCallback;
         this.project = project;
         init();

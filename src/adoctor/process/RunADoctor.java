@@ -9,8 +9,8 @@ import adoctor.application.proposal.undo.Undo;
 import adoctor.application.refactoring.RefactoringDriver;
 import adoctor.application.smell.ClassSmell;
 import org.eclipse.jface.text.BadLocationException;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 
 import java.io.File;
@@ -37,12 +37,10 @@ import java.util.List;
 
 public class RunADoctor {
 
-    private static final int JSONINDENTATION = 2;
-
     public static void main (String[] args){
 
-
-        /*args=new String[3];
+/*
+        args=new String[3];
         args[0] = "C:\\Users\\Francesco\\Desktop\\qui\\testclasses"; //project path
         args[1] = "C:\\Users\\Francesco\\Desktop\\qui\\log.json"; //output path
         args[2] = "111111"; //selected code smells
@@ -111,6 +109,7 @@ public class RunADoctor {
             JSONObject smellJSON;
             String tempAbsPath;
 
+
             //creating the JSON array of code smells
             for (ClassSmell cs: classSmells) {
                 smellJSON=new JSONObject();
@@ -121,16 +120,19 @@ public class RunADoctor {
                 //removing the Travis path from the absolute path
                 tempAbsPath= cs.getClassBean().getSourceFile().getAbsolutePath();
                 tempAbsPath=tempAbsPath.replaceFirst(inputCL.getProject().getAbsolutePath(), "");
+
                 smellJSON.put("Location",tempAbsPath);
 
-                smellsJSONArray.put(smellJSON);
+                smellsJSONArray.add(smellJSON);
             }
+
+            System.out.println(smellsJSONArray.toJSONString());
 
             //printing the results as a JSON file
             File outputJSONFile = inputCL.getOutputLogFile();
             outputJSONFile.createNewFile();
             FileWriter writer = new FileWriter(outputJSONFile);
-            writer.write(smellsJSONArray.toString(JSONINDENTATION));
+            writer.write(smellsJSONArray.toJSONString());
             writer.close();
 
 
